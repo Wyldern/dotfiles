@@ -68,6 +68,11 @@ setopt append_history auto_cd extended_glob share_history correct_all auto_list 
 unsetopt correct correct_all
 bindkey -e
 
+# nix-darwin
+if [[ -d "/run/current-system/sw/bin" ]]; then
+  export PATH="/run/current-system/sw/bin:${PATH}"
+fi
+
 # Arkade
 if [[ -d "$HOME/.arkade/bin" ]]; then
   export PATH="${HOME}/.arkade/bin:${PATH}"
@@ -264,9 +269,21 @@ if [[ -o INTERACTIVE ]]; then
       git push -u origin $(git rev-parse --abbrev-ref HEAD)
     }
 
+    # Oh shit, new branch - for when you start hacking on a merged branch by accident...
+    osnb() {
+      git stash && \
+      gppm && \
+      git checkout -b "$1" && \
+      git stash pop
+    }
+
     if _cmd_exists delta; then
       alias gdd="git diff --no-ext-diff | delta"
     fi
+  fi
+
+  if _cmd_exists uv; then
+    eval "$(uv generate-shell-completion zsh)"
   fi
 
   # iTerm tools
@@ -328,3 +345,4 @@ fi
 # Load asdf
 [[ -d "$HOMEBREW_ROOT" && -f "$HOMEBREW_ROOT/opt/asdf/libexec/asdf.sh" ]] && source "$HOMEBREW_ROOT/opt/asdf/libexec/asdf.sh"
 [[ -f "$HOME/.asdf/plugins/java/set-java-home.zsh" ]] && source "$HOME/.asdf/plugins/java/set-java-home.zsh"
+[[ -f "$HOME/.asdf/plugins/golang/set-env.zsh" ]] && source "$HOME/.asdf/plugins/golang/set-env.zsh"

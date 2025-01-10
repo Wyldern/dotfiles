@@ -33,7 +33,7 @@
         pkgs.golangci-lint
         pkgs.goreleaser
         pkgs.gradle
-        pkgs.granted
+        # pkgs.granted
         pkgs.graphviz
         pkgs.grpcurl
         # pkgs.hatch
