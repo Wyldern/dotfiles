@@ -10,7 +10,7 @@ if [[ ! -v ZDOTDIR ]]; then
   export ZDOTDIR="$HOME"
 fi
 
-#zmodload zsh/zprof
+# zmodload zsh/zprof
 
 # Helpers
 _cmd_exists() {
@@ -26,10 +26,29 @@ _alias_to() {
   done
 }
 
+_add_path() {
+  for p in $@; do
+    if [[ -d "$p" ]]; then
+      export PATH="$p:$PATH"
+    fi
+  done
+}
+
+_source_exists() {
+  if [[ -f "$1" ]]; then
+    source "$1"
+  fi
+}
+
+# Add things that Homebrew can and should overrule
+_add_path "/run/current-system/sw/bin"
+_add_path "/snap/bin"
+
 # Homebrew/Linuxbrew - this is set up early for GPG/Antibody
 test -d "$HOME/.linuxbrew" && export HOMEBREW_ROOT="$HOME/.linuxbrew"
 test -d "/home/linuxbrew/.linuxbrew" && export HOMEBREW_ROOT="/home/linuxbrew/.linuxbrew"
 test -d "/opt/homebrew" && export HOMEBREW_ROOT="/opt/homebrew"
+export HOMEBREW_VERBOSE="true"
 
 if [[ -d "$HOMEBREW_ROOT" ]]; then
   export PATH="$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:$PATH"
@@ -50,17 +69,6 @@ else
   echo "!! Antidote not found from Homebrew; install it with: brew install antidote"
 fi
 
-# GPG2
-export GPG_TTY=$(tty)
-if _cmd_exists gpg2-agent; then
-  GPG_AGENT="gpg2-agent"
-  alias gpg="gpg2" # Sod you old distros
-elif _cmd_exists gpg-agent; then
-  GPG_AGENT="gpg-agent"
-else
-  echo "warn: unable to locate gpg(2)-agent -- is GPG installed?"
-fi
-
 HISTFILE="$ZDOTDIR/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
@@ -68,44 +76,41 @@ setopt append_history auto_cd extended_glob share_history correct_all auto_list 
 unsetopt correct correct_all
 bindkey -e
 
-# nix-darwin
-if [[ -d "/run/current-system/sw/bin" ]]; then
-  export PATH="/run/current-system/sw/bin:${PATH}"
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/tmp/zsh/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Arkade
-if [[ -d "$HOME/.arkade/bin" ]]; then
-  export PATH="${HOME}/.arkade/bin:${PATH}"
+# Load asdf
+_source_exists "$HOMEBREW_ROOT/opt/asdf/libexec/asdf.sh"
+_source_exists "$HOME/.asdf/plugins/java/set-java-home.zsh"
+_source_exists "$HOME/.asdf/plugins/golang/set-env.zsh"
+export ASDF_GOLANG_MOD_VERSION_ENABLED=true
+
+# GPG2
+export GPG_TTY=$(tty)
+if _cmd_exists gpg2-agent; then
+  GPG_AGENT="gpg2-agent"
+  alias gpg="gpg2" # Sod you old distros
+elif _cmd_exists gpg-agent; then
+  GPG_AGENT="gpg-agent"
 fi
 
-# Krew for kubectl
-if [[ -d "$HOME/.krew/bin" ]]; then
-  export PATH="${HOME}/.krew/bin:${PATH}"
-fi
-
-# Cargo
-if [[ -d "$HOME/.cargo/bin" ]]; then
-  export PATH="$HOME/.cargo/bin:$PATH"
-fi
+# Add stuff to PATH
+_add_path "$HOME/.arkade/bin"
+_add_path "$HOME/.krew/bin"
+_add_path "$HOME/.cargo/bin"
+_add_path "$HOME/.local/bin"
+_add_path "$HOME/.poetry/bin"
+_add_path "$HOME/bin"
+_add_path "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"
+_add_path "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
 # Rust src
 if [[ -d "$HOME/src/rust" ]]; then
   export RUST_SRC_PATH="$HOME/src/rust/src"
-fi
-
-# Load Zsh completions
-if [[ -d "$HOME/dotfiles/zsh_completions" ]]; then
-  export fpath=($fpath "$HOME/dotfiles/zsh_completions")
-fi
-
-# Python pyenv
-if _cmd_exists pyenv; then
-  _evalcache pyenv init -
-fi
-
-# Ruby rbenv
-if _cmd_exists rbenv; then
-  _evalcache rbenv init - zsh
 fi
 
 # Sensible default env vars
@@ -122,10 +127,6 @@ if _cmd_exists go; then
   export GOPATH="$HOME/go"
   export PATH="$GOPATH/bin:$PATH"
 fi
-if [[ -d "/snap/bin" ]]; then export PATH="/snap/bin:$PATH"; fi
-if [[ -d "$HOME/bin" ]]; then export PATH="$HOME/bin:$PATH"; fi
-if [[ -d "/Applications/Visual Studio Code - Insiders.app" ]]; then export PATH="/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin:$PATH"; fi
-if [[ -d "/Applications/Visual Studio Code.app" ]]; then export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"; fi
 
 ## Clang/LLVM
 if _cmd_exists clang; then
@@ -144,18 +145,18 @@ if [ -d /usr/local/opt/apache-spark ]; then
   export SPARK_HOME="/usr/local/opt/apache-spark"
 fi
 
-# Pipx
-if [[ -d "$HOME/.local/bin" ]]; then
-  export PATH="$HOME/.local/bin:$PATH"
-fi
-
-# Poetry
-if [[ -d "$HOME/.poetry/bin" ]]; then
-  export PATH="$HOME/.poetry/bin:$PATH"
+# local profile
+if [[ -f "$HOME/.zshrc.local" ]]; then
+  source "$HOME/.zshrc.local"
 fi
 
 # Skip unnecessary bits for interactive shells
 if [[ -o INTERACTIVE ]]; then
+
+  # Load Zsh completions
+  if [[ -d "$HOME/dotfiles/zsh_completions" ]]; then
+    export fpath=($fpath "$HOME/dotfiles/zsh_completions")
+  fi
 
   # Setup completion
   autoload -Uz compinit
@@ -171,55 +172,10 @@ if [[ -o INTERACTIVE ]]; then
   zstyle ':completion:*' group-name '' # group results by category
   zstyle ':completion:::::' completer _expand _complete _ignored _approximate # enable approximate matches for completion
 
-  # Homebrew/Linuxbrew
-  if _cmd_exists brew; then
-    export HOMEBREW_VERBOSE="true"
-  fi
-
-  # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/tmp/zsh/.zshrc.
-  # Initialization code that may require console input (password prompts, [y/n]
-  # confirmations, etc.) must go above this block; everything else may go below.
-  if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-  fi
-
-  # System banner (if present and populated)
-  if [[ -s "$HOME/.banner" ]]; then
-    RELEASE=$(lsb_release -ds 2>/dev/null || printf "unknown")
-    KERNEL=$(cat /proc/version_signature 2>/dev/null || cat /proc/version 2>/dev/null || printf "unknown")
-    cat "$HOME/.banner" | sed -e "s/@RELEASE@/$RELEASE/" -e "s/@KERNEL@/$KERNEL/"
-  fi
-
-  # GitHub CLI
-  if _cmd_exists gh; then
-    _evalcache gh completion -s zsh
-    alias prc="gh pr create"
-    alias prs="gh pr status"
-    alias prv="gh pr view"
-    alias prw="gh pr view --web"
-    alias prsc="gh pr checks"
-    alias prm="gh pr merge -d"
-    function prd() {
-      gh pr diff --patch $1 | delta
-    }
-    function ghclone() {
-      local target="$HOME/ghdev/$1"
-      [[ -d "$target" ]] || mkdir -p "$target"
-      git clone "git@github.com:$1.git" "$target"
-    }
-  fi
-
   # bat, the better cat
   if _cmd_exists bat; then
     export BAT_THEME="TwoDark"
     alias cat=bat
-  fi
-
-  # thefuck
-  if _cmd_exists thefuck; then
-    _evalcache thefuck --alias
-    _evalcache thefuck --alias arse
-    _evalcache thefuck --alias shit
   fi
 
   # Aliases
@@ -228,8 +184,17 @@ if [[ -o INTERACTIVE ]]; then
   _alias_to kubens kns
   _alias_to kubectx kctx
   _alias_to toxiproxy-cli toxi
-
   _alias_to sudo _
+
+  export FZF_DEFAULT_OPTS="--style full"
+  export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always {}'"
+  export FZF_COMPLETION_OPTS="--preview 'bat -n --color=always {}'"
+
+  # Cached evaluations of shell command helpers
+  _evalcache uv generate-shell-completion zsh
+  _evalcache fzf --zsh  # This MUST be before Atuin, so Atuin's ctrl-r binding takes precedence
+  _evalcache atuin init zsh --disable-up-arrow
+  _evalcache zoxide init zsh
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
     alias ls="ls -h"
@@ -240,7 +205,6 @@ if [[ -o INTERACTIVE ]]; then
   # Filter out macOS, as that might be confused with the JDK apt tool
   if _cmd_exists apt && [[ "$OSTYPE" != "darwin"* ]]; then alias apt="sudo apt"; fi
   if _cmd_exists pacman; then alias pacman="sudo pacman"; fi
-  if _cmd_exists zoxide; then _evalcache zoxide init zsh; fi
   if _cmd_exists eza; then
     alias ls="eza"
     alias la="eza -a"
@@ -249,10 +213,18 @@ if [[ -o INTERACTIVE ]]; then
     echo "!! exa is unmaintained; switch to eza"
   fi
 
+  if _cmd_exists code; then
+    c() {
+      code "${1:-.}"
+    }
+  fi
+
   # Git aliases
   if _cmd_exists git; then
     alias gs="git status"
+    alias ga="git add"
     alias gd="git diff"
+    alias gdd="git diff"
     alias gp="git pull"
     alias gpp="git pull --prune"
     alias gc="git commit"
@@ -282,8 +254,28 @@ if [[ -o INTERACTIVE ]]; then
     fi
   fi
 
-  if _cmd_exists uv; then
-    eval "$(uv generate-shell-completion zsh)"
+  # GitHub CLI
+  if _cmd_exists gh; then
+    _evalcache gh completion -s zsh
+    alias prc="gh pr create"
+    alias prs="gh pr status"
+    alias prv="gh pr view"
+    alias prw="gh pr view --web"
+    alias prsc="gh pr checks"
+    alias prm="gh pr merge -d"
+    function prd() {
+      gh pr diff --patch $1 | delta
+    }
+    function ghclone() {
+      local target="$HOME/ghdev/$1"
+      [[ -d "$target" ]] || mkdir -p "$target"
+      git clone "git@github.com:$1.git" "$target"
+    }
+    
+    if gh extension list | grep -q "gh copilot"; then
+      alias ghcs="gh copilot suggest --hostname github.com"
+      alias ghce="gh copilot explain --hostname github.com"
+    fi
   fi
 
   # iTerm tools
@@ -297,28 +289,15 @@ if [[ -o INTERACTIVE ]]; then
   bindkey "^[[3~" delete-char
   bindkey "^[3;5~" delete-char
 
-  # Selecta (see https://github.com/garybernhardt/selecta/blob/master/EXAMPLES.md)
-  if _cmd_exists selecta; then
-    # By default, ^S freezes terminal output and ^Q resumes it. Disable that so
-    # that those keys can be used for other things.
-    unsetopt flowcontrol
-    # Run Selecta in the current working directory, appending the selected path, if
-    # any, to the current command, followed by a space.
-    function insert-selecta-path-in-command-line() {
-        local selected_path
-        # Print a newline or we'll clobber the old prompt.
-        echo
-        # Find the path; abort if the user doesn't select anything.
-        selected_path=$(find * -type f | selecta) || return
-        # Append the selection to the current command buffer.
-        eval 'LBUFFER="$LBUFFER$selected_path "'
-        # Redraw the prompt since Selecta has drawn several new lines of text.
-        zle reset-prompt
+  export KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
+  if [[ !("$KUBECONFIG" =~ ^\/(tmp|var)\/) && -e "$KUBECONFIG" ]]; then
+    export ORIGINAL_KUBECONFIG="$KUBECONFIG"
+    export KUBECONFIG="$(mktemp -t shell_kubeconfig)"
+    cp "$ORIGINAL_KUBECONFIG" "$KUBECONFIG"
+
+    function TRAPEXIT() {
+      rm "$KUBECONFIG"
     }
-    # Create the zle widget
-    zle -N insert-selecta-path-in-command-line
-    # Bind the key to the newly created widget
-    bindkey "^S" "insert-selecta-path-in-command-line"
   fi
 
   # Fuzzy Finder
@@ -337,12 +316,4 @@ then
   set --
 fi
 
-# local profile
-if [[ -f "$HOME/.zshrc.local" ]]; then
-  source "$HOME/.zshrc.local"
-fi
-
-# Load asdf
-[[ -d "$HOMEBREW_ROOT" && -f "$HOMEBREW_ROOT/opt/asdf/libexec/asdf.sh" ]] && source "$HOMEBREW_ROOT/opt/asdf/libexec/asdf.sh"
-[[ -f "$HOME/.asdf/plugins/java/set-java-home.zsh" ]] && source "$HOME/.asdf/plugins/java/set-java-home.zsh"
-[[ -f "$HOME/.asdf/plugins/golang/set-env.zsh" ]] && source "$HOME/.asdf/plugins/golang/set-env.zsh"
+# zprof

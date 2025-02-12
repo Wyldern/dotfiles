@@ -1,10 +1,10 @@
 - defaults:
     link:
-        create: true
-        relink: true
-        force: true
+      create: true
+      relink: true
+      force: true
 
-- clean: ['~', '~/.config', '~/.virtualenvs']
+- clean: ['~', '~/.config']
 
 - link:
     ~/.zshrc: zshrc
@@ -13,14 +13,19 @@
     ~/.config/starship.toml: starship.toml
     ~/.tmux.conf: tmuxrc
     ~/.vimrc: vimrc
-    # ~/.yabairc: yabairc
-    # ~/.skhdrc: skhdrc
     ~/.asdfrc: asdfrc
     ~/.default-python-packages: default-python-packages
     ~/.default-gems: default-gems
     ~/.gnupg/gpg.conf: gpg.conf
     ~/.gnupg/gpg-agent.conf: gpg-agent.conf
-    ~/.virtualenvs/postactivate: virtualenvs/postactivate
+    ~/.config/fish/config.fish: fish/config.fish
+    ~/.config/atuin/config.toml: atuin.toml
     ~/.config/nvim:
-        path: nvim
-        create: true
+      path: nvim
+      create: true
+
+# - shell:
+#   - command: fish hooks/tide.fish
+#     description: Install tide for fish
+#     stdout: true
+#     stderr: true

@@ -1,5 +1,0 @@
-#!/bin/zsh
-# This hook is sourced after every virtualenv is activated.
-
-#PROMPT="%{$fg_bold[red]%}(%m/`basename \"$VIRTUAL_ENV\"`) ⤏  %~ %{%(!.$fg[green].$fg_bold[red])%}>> %{$reset_color%b%}"
-

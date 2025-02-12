@@ -1,0 +1,6 @@
+filter_mode = "global"
+filter_mode_shell_up_key_binding = "workspace"
+workspaces = true
+style = "compact"
+enter_accept = false
+prefers_reduced_motion = true

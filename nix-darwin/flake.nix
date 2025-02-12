@@ -65,7 +65,7 @@
         pkgs.vcluster
         pkgs.velero
         pkgs.xz
-        pkgs.yq
+        pkgs.yq-go
         pkgs.zoxide
       ];
 
