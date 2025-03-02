@@ -116,9 +116,11 @@ fi
 # Sensible default env vars
 if _cmd_exists nvim; then
   export EDITOR="$(which nvim)"
+  export DIFFPROG="$(which nvim) -d"
   alias nv=nvim
   alias vim=nvim
   alias vi=nvim
+  alias vimdiff="nvim -d"
 elif _cmd_exists vim; then
   export EDITOR="$(which vim)"
   alias vi=vim
@@ -292,7 +294,12 @@ if [[ -o INTERACTIVE ]]; then
   export KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
   if [[ !("$KUBECONFIG" =~ ^\/(tmp|var)\/) && -e "$KUBECONFIG" ]]; then
     export ORIGINAL_KUBECONFIG="$KUBECONFIG"
-    export KUBECONFIG="$(mktemp -t shell_kubeconfig)"
+    # Handle macOS mktemp being a bit different
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      export KUBECONFIG="$(mktemp -t shell_kubeconfig)"
+    else
+      export KUBECONFIG="$(mktemp -t shell_kubeconfig.XXXXXX)"
+    fi
     cp "$ORIGINAL_KUBECONFIG" "$KUBECONFIG"
 
     function TRAPEXIT() {
