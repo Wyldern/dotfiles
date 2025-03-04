@@ -23,3 +23,12 @@ tide configure \
     --prompt_spacing=Sparse \
     --icons='Few icons' \
     --transient=No
+
+# Note the `newline character` has to be last - that sets up the two-line prompt with prompt arrow
+set -U tide_left_prompt_items context pwd git jobs status newline character
+set -U tide_right_prompt_items cmd_duration kubectl aws terraform go java node python ruby rustc nix_shell
+set -U tide_git_truncation_length 100
+set -U tide_git_icon 
+set -U tide_git_bg_color green
+set -U tide_git_bg_color_unstable yellow
+set -U tide_git_bg_color_urgent red

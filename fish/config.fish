@@ -24,6 +24,9 @@ function _alias_to --argument-names cmd alias
     end
 end
 
+# Homebrew needs to override nix-darwin so do this first
+_add_path /run/current-system/sw/bin
+
 test -d "$HOME/.linuxbrew" && export HOMEBREW_ROOT="$HOME/.linuxbrew"
 test -d "/home/linuxbrew/.linuxbrew" && export HOMEBREW_ROOT="/home/linuxbrew/.linuxbrew"
 test -d "/opt/homebrew" && export HOMEBREW_ROOT="/opt/homebrew"
@@ -33,9 +36,13 @@ if [ -d "$HOMEBREW_ROOT" ]
     _add_path_element MANPATH $HOMEBREW_ROOT/share/man
     _add_path_element INFOPATH $HOMEBREW_ROOT/share/info
     set -gx HOMEBREW_VERBOSE true
+
+    # Common Fate Granted
+    if [ -f $HOMEBREW_ROOT/bin/assume.fish ]
+        alias assume="source $HOMEBREW_ROOT/bin/assume.fish"
+    end
 end
 
-_add_path /run/current-system/sw/bin
 _add_path $HOME/go/bin
 _add_path $HOME/.local/bin
 _add_path $HOME/.poetry/bin
@@ -120,20 +127,28 @@ if status is-interactive
         alias gm "git merge"
         alias gco "git checkout"
 
-        function gppm
+        function gnb -a branch -d "New git branch from upstream HEAD"
+            if [ -z $branch ]
+                echo "missing parameter: branch"
+                return -1
+            end
+            git fetch && git checkout -b $branch refs/remotes/origin/HEAD
+        end
+
+        function gppm -d "Checkout and pull main git branch"
             git checkout (git symbolic-ref refs/remotes/origin/HEAD --short | cut -f 2 -d /) && git pull --prune
         end
 
-        function gpo
+        function gpo -d "Push current git branch to origin and track"
             git push -u origin (git rev-parse --abbrev-ref HEAD)
         end
 
         # Oh shit, new branch - for when you start hacking on a merged branch by accident...
-        function osnb --argument-names branch
-            git stash && \
-            gppm && \
-            git checkout -b $branch && \
-            git stash pop
+        function osnb -a branch -d "Stash changes, create new git branch from upstream HEAD, and re-apply stashed changes"
+            git fetch  # Fetch first, since this is the most likely bit to fail
+            and git stash
+            and git checkout -b $branch refs/remotes/origin/HEAD
+            and git stash pop
         end
     end
 
@@ -150,7 +165,12 @@ if status is-interactive
     set -q KUBECONFIG || set -gx KUBECONFIG $HOME/.kube/config
     if not string match -q -r '^/(tmp|var)/' $KUBECONFIG && test -f $KUBECONFIG
         set -gx ORIGINAL_KUBECONFIG $KUBECONFIG
-        set -gx KUBECONFIG (mktemp -t shell_kubeconfig)
+        switch (uname)
+            case Darwin FreeBSD NetBSD DragonFly
+                set -gx KUBECONFIG (mktemp -t shell_kubeconfig)
+            case '*'
+                set -gx KUBECONFIG (mktemp -t shell_kubeconfig.XXXXXX)
+        end
         cp $ORIGINAL_KUBECONFIG $KUBECONFIG
 
         function _remove_shell_kubeconfig --on-event fish_exit
@@ -161,12 +181,6 @@ if status is-interactive
     if command -q uv
         uv generate-shell-completion fish | source
     end
-
-    # Set up Tide prompt
-    # Note the `newline character` has to be last - that sets up the two-line prompt with prompt arrow
-    set -g tide_left_prompt_items context pwd git jobs status newline character
-    set -g tide_right_prompt_items cmd_duration kubectl aws terraform go java node python ruby rustc nix_shell
-    set -g tide_git_truncation_length 100
 
     if command -q atuin
         atuin init fish --disable-up-arrow | source

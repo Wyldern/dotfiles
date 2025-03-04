@@ -24,8 +24,8 @@
       path: nvim
       create: true
 
-# - shell:
-#   - command: fish hooks/tide.fish
-#     description: Install tide for fish
-#     stdout: true
-#     stderr: true
+- shell:
+  - command: fish hooks/tide.fish
+    description: Install tide for fish
+    stdout: true
+    stderr: true

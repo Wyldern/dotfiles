@@ -235,6 +235,10 @@ if [[ -o INTERACTIVE ]]; then
     alias gm="git merge"
     alias gco="git checkout"
 
+    gnb() {
+      git fetch && git checkout -b "$1" refs/remotes/origin/HEAD
+    }
+
     gppm() {
       git checkout $(git symbolic-ref refs/remotes/origin/HEAD --short | cut -f 2 -d /) && git pull --prune
     }
@@ -245,9 +249,9 @@ if [[ -o INTERACTIVE ]]; then
 
     # Oh shit, new branch - for when you start hacking on a merged branch by accident...
     osnb() {
+      git fetch && \  # Fetch first, since this is the most likely bit to fail
       git stash && \
-      gppm && \
-      git checkout -b "$1" && \
+      git checkout -b "$1" refs/remotes/origin/HEAD && \
       git stash pop
     }
 
@@ -291,8 +295,9 @@ if [[ -o INTERACTIVE ]]; then
   bindkey "^[[3~" delete-char
   bindkey "^[3;5~" delete-char
 
+  echo "$@"
   export KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
-  if [[ !("$KUBECONFIG" =~ ^\/(tmp|var)\/) && -e "$KUBECONFIG" ]]; then
+  if [[ "$ZSH_SUBSHELL" -eq 0 && !("$KUBECONFIG" =~ ^\/(tmp|var)\/) && -e "$KUBECONFIG" ]]; then
     export ORIGINAL_KUBECONFIG="$KUBECONFIG"
     # Handle macOS mktemp being a bit different
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -303,7 +308,7 @@ if [[ -o INTERACTIVE ]]; then
     cp "$ORIGINAL_KUBECONFIG" "$KUBECONFIG"
 
     function TRAPEXIT() {
-      rm "$KUBECONFIG"
+      [[ "$ZSH_SUBSHELL" -eq 0 ]] && rm "$KUBECONFIG"
     }
   fi
 

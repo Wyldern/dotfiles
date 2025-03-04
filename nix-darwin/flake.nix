@@ -24,14 +24,14 @@
         pkgs.evans
         pkgs.eza
         pkgs.fd
-        pkgs.fzf
+        # pkgs.fzf
         pkgs.gh
         pkgs.gnupg
         pkgs.go
         pkgs.go-jsonnet
         pkgs.go-task
-        pkgs.golangci-lint
-        pkgs.goreleaser
+        # pkgs.golangci-lint
+        # pkgs.goreleaser
         pkgs.gradle
         # pkgs.granted
         pkgs.graphviz
