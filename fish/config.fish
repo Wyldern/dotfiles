@@ -70,6 +70,9 @@ _source_exists $HOME/.asdf/plugins/java/set-java-home.fish
 _source_exists $HOME/.asdf/plugins/golang/set-env.fish
 set -gx ASDF_GOLANG_MOD_VERSION_ENABLED true
 
+# uv
+set -gx UV_PYTHON_PREFERENCE only-managed
+
 _source_exists ~/.local.fish
 
 if status is-interactive
@@ -94,7 +97,7 @@ if status is-interactive
         function ghclone --argument-names repo
             set -f path $HOME/ghdev/$repo
             [ -d $path ] || mkdir -p $path
-            git clone git@github.com:{$path}.git $repo
+            git clone git@github.com:{$repo}.git $path
         end
 
         if gh extension list | grep -q "gh copilot"

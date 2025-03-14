@@ -12,7 +12,6 @@
     ~/.zsh_plugins.txt: zsh_plugins.txt
     ~/.config/starship.toml: starship.toml
     ~/.tmux.conf: tmuxrc
-    ~/.vimrc: vimrc
     ~/.asdfrc: asdfrc
     ~/.default-python-packages: default-python-packages
     ~/.default-gems: default-gems

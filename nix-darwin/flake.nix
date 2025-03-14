@@ -13,60 +13,60 @@
       # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
       environment.systemPackages = [
-        pkgs.asdf-vm
-        pkgs.awscli2
-        pkgs.bat
-        pkgs.cfssl
-        pkgs.delta
-        pkgs.difftastic
-        pkgs.dyff
-        pkgs.eksctl
-        pkgs.evans
-        pkgs.eza
-        pkgs.fd
+        # pkgs.asdf-vm
+        # pkgs.awscli2
+        # pkgs.bat
+        # pkgs.cfssl
+        # pkgs.delta
+        # pkgs.difftastic
+        # pkgs.dyff
+        # pkgs.eksctl
+        # pkgs.evans
+        # pkgs.eza
+        # pkgs.fd
         # pkgs.fzf
-        pkgs.gh
-        pkgs.gnupg
-        pkgs.go
-        pkgs.go-jsonnet
-        pkgs.go-task
+        # pkgs.gh
+        # pkgs.gnupg
+        # pkgs.go
+        # pkgs.go-jsonnet
+        # pkgs.go-task
         # pkgs.golangci-lint
         # pkgs.goreleaser
-        pkgs.gradle
+        # pkgs.gradle
         # pkgs.granted
-        pkgs.graphviz
-        pkgs.grpcurl
+        # pkgs.graphviz
+        # pkgs.grpcurl
         # pkgs.hatch
-        pkgs.htop
-        pkgs.httpie
-        pkgs.istioctl
-        pkgs.jq
-        pkgs.k9s
-        pkgs.krew
-        pkgs.kubebuilder
-        pkgs.kubectl
-        pkgs.kubernetes-helm
-        pkgs.kustomize
-        pkgs.neovim
-        pkgs.parallel
-        pkgs.pipenv
-        pkgs.pipx
-        pkgs.podman
-        pkgs.podman-compose
-        pkgs.pre-commit
-        pkgs.ripgrep
-        pkgs.shellcheck
-        pkgs.silver-searcher
-        pkgs.skopeo
-        pkgs.sonobuoy
-        pkgs.steampipe
-        pkgs.tree-sitter
-        pkgs.trivy
-        pkgs.vcluster
-        pkgs.velero
-        pkgs.xz
-        pkgs.yq-go
-        pkgs.zoxide
+        # pkgs.htop
+        # pkgs.httpie
+        # pkgs.istioctl
+        # pkgs.jq
+        # pkgs.k9s
+        # pkgs.krew
+        # pkgs.kubebuilder
+        # pkgs.kubectl
+        # pkgs.kubernetes-helm
+        # pkgs.kustomize
+        # pkgs.neovim
+        # pkgs.parallel
+        # pkgs.pipenv
+        # pkgs.pipx
+        # pkgs.podman
+        # pkgs.podman-compose
+        # pkgs.pre-commit
+        # pkgs.ripgrep
+        # pkgs.shellcheck
+        # pkgs.silver-searcher
+        # pkgs.skopeo
+        # pkgs.sonobuoy
+        # pkgs.steampipe
+        # pkgs.tree-sitter
+        # pkgs.trivy
+        # pkgs.vcluster
+        # pkgs.velero
+        # pkgs.xz
+        # pkgs.yq-go
+        # pkgs.zoxide
       ];
 
       services.skhd.enable = true;

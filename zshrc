@@ -125,10 +125,6 @@ elif _cmd_exists vim; then
   export EDITOR="$(which vim)"
   alias vi=vim
 fi
-if _cmd_exists go; then
-  export GOPATH="$HOME/go"
-  export PATH="$GOPATH/bin:$PATH"
-fi
 
 ## Clang/LLVM
 if _cmd_exists clang; then
@@ -141,6 +137,9 @@ fi
 # Virtualenv Wrapper
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/dev/python
+
+# uv
+export UV_PYTHON_PREFERENCE="only-managed"
 
 # Spark
 if [ -d /usr/local/opt/apache-spark ]; then
