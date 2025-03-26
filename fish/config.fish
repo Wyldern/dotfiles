@@ -119,7 +119,6 @@ if status is-interactive
 
     if command -q git
         alias gs "git status"
-        alias ga "git add"
         alias gd "git diff"
         alias gdd "git diff"
         alias gp "git pull"
@@ -129,6 +128,14 @@ if status is-interactive
         alias gri "git rebase -i"
         alias gm "git merge"
         alias gco "git checkout"
+
+        function ga --wraps "git add"
+            if [ (count $argv) -gt 0 ]
+                git add $argv
+            else
+                git add .
+            end
+        end
 
         function gnb -a branch -d "New git branch from upstream HEAD"
             if [ -z $branch ]
@@ -156,7 +163,7 @@ if status is-interactive
     end
 
     if command -q code
-        function c
+        function c --wraps "code"
             if [ (count $argv) -gt 0 ]
                 code $argv
             else
