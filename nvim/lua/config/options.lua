@@ -29,7 +29,9 @@ opt.swapfile = false
 opt.modeline = false -- modelines have security risks associated with them
 opt.showmatch = true -- highlight matching pairs
 
-if not vim.g.vscode then
+if vim.g.vscode then
+  opt.spelllang = {} -- disable spellchecking when in VS Code
+else
   opt.colorcolumn = "120" -- mark column 120 for a sensible guide for max line length
 end
 

@@ -19,6 +19,7 @@
     ~/.gnupg/gpg-agent.conf: gpg-agent.conf
     ~/.config/fish/config.fish: fish/config.fish
     ~/.config/atuin/config.toml: atuin.toml
+    ~/.markdownlint-cli2.jsonc: markdownlint-cli2.jsonc
     ~/.config/nvim:
       path: nvim
       create: true
