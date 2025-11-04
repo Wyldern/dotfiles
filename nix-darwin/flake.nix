@@ -69,11 +69,11 @@
         # pkgs.zoxide
       ];
 
-      services.skhd.enable = true;
+      services.skhd.enable = false;
       services.skhd.package = pkgs.skhd;
       services.skhd.skhdConfig = builtins.readFile ./skhdrc;
 
-      services.yabai.enable = true;
+      services.yabai.enable = false;
       services.yabai.package = pkgs.yabai;
       services.yabai.extraConfig = builtins.readFile ./yabairc;
 

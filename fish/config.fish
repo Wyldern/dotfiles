@@ -49,6 +49,7 @@ _add_path $HOME/.poetry/bin
 _add_path $HOME/.arkade/bin
 _add_path $HOME/.krew/bin
 _add_path $HOME/.cargo/bin
+_add_path $HOME/bin
 _add_path "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"
 _add_path "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 _add_path_element RUST_SRC_PATH $HOME/src/rust
@@ -78,6 +79,13 @@ _source_exists ~/.local.fish
 if status is-interactive
     # Commands to run in interactive sessions can go here
 
+    # Fix keybinds for ctrl-arrow operations
+    bind ctrl-left backward-bigword
+    bind ctrl-right forward-bigword
+    bind alt-left backward-token
+    bind alt-right forward-token
+
+    # Common aliases
     _alias_to kubectl k
     _alias_to kubens kns
     _alias_to kubectx kctx
@@ -87,7 +95,7 @@ if status is-interactive
     abbr -a _ --position command sudo
 
     if command -q gh
-        alias prc "gh pr create"
+        alias prc "git push -u origin HEAD && gh pr create -w"
         alias prs "gh pr status"
         alias prv "gh pr view"
         alias prw "gh pr view --web"

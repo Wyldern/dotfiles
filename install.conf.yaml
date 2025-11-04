@@ -20,6 +20,8 @@
     ~/.config/fish/config.fish: fish/config.fish
     ~/.config/atuin/config.toml: atuin.toml
     ~/.markdownlint-cli2.jsonc: markdownlint-cli2.jsonc
+    ~/.skhdrc: nix-darwin/skhdrc
+    ~/.yabairc: nix-darwin/yabairc
     ~/.config/nvim:
       path: nvim
       create: true
