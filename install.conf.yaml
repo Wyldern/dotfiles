@@ -25,6 +25,8 @@
     ~/.config/nvim:
       path: nvim
       create: true
+    ~/.claude/rules/sandbox.md: claude/rules/sandbox.md
+    ~/.claude/rules/style.md: claude/rules/style.md
 
 - shell:
   - command: fish hooks/tide.fish

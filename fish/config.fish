@@ -180,6 +180,12 @@ if status is-interactive
         end
     end
 
+    if command -q claude
+        function cl --wraps "claude"
+            CLAUDE_CODE_MAX_OUTPUT_TOKENS=32768 EDITOR="code -w" claude $argv
+        end
+    end
+
     set -q KUBECONFIG || set -gx KUBECONFIG $HOME/.kube/config
     if not string match -q -r '^/(tmp|var)/' $KUBECONFIG && test -f $KUBECONFIG
         set -gx ORIGINAL_KUBECONFIG $KUBECONFIG
