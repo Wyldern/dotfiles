@@ -1,0 +1,46 @@
+[tools]
+age = "latest"
+argo = "latest"
+argocd = "latest"
+atuin = "latest"
+aube = "latest"
+bat = "latest"
+black = "latest"
+doggo = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+gh = "latest"
+go = "1.26"
+golangci-lint = "latest"
+gradle = "latest"
+java = "temurin-25"
+k9s = "latest"
+node = "lts-krypton"
+pinact = "latest"
+pre-commit = "latest"
+prettier = "latest"
+python = "3"
+shellcheck = "latest"
+sops = "latest"
+tflint = "latest"
+tmux = "latest"
+trivy = "latest"
+uv = "latest"
+yamllint = "latest"
+yq = "latest"
+zizmor = "latest"
+
+[settings]
+disable_backends = ["asdf", "vfox"]
+idiomatic_version_file_enable_tools = ["python", "node", "terraform", "terragrunt", "pnpm", "yarn", "go"]
+minimum_release_age = "7d"
+
+[settings.java]
+shorthand_vendor = "temurin"
+
+[settings.status]
+missing_tools = "never"
+
+[settings.github]
+credential_command = 'gh auth token --hostname "$MISE_CREDENTIAL_HOST"'

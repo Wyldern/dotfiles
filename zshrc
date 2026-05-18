@@ -283,11 +283,6 @@ if [[ -o INTERACTIVE ]]; then
     fi
   fi
 
-  # iTerm tools
-  send_notification() {
-    echo -n "\e]9;$1\007"
-  }
-
   # Key bindings
   bindkey ";5C" forward-word
   bindkey ";5D" backward-word
@@ -296,26 +291,34 @@ if [[ -o INTERACTIVE ]]; then
 
   echo "$@"
   export KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
-  if [[ "$ZSH_SUBSHELL" -eq 0 && !("$KUBECONFIG" =~ ^\/(tmp|var)\/) && -e "$KUBECONFIG" ]]; then
-    export ORIGINAL_KUBECONFIG="$KUBECONFIG"
-    # Handle macOS mktemp being a bit different
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      export KUBECONFIG="$(mktemp -t shell_kubeconfig)"
-    else
-      export KUBECONFIG="$(mktemp -t shell_kubeconfig.XXXXXX)"
-    fi
-    cp "$ORIGINAL_KUBECONFIG" "$KUBECONFIG"
-
-    function TRAPEXIT() {
-      [[ "$ZSH_SUBSHELL" -eq 0 ]] && rm "$KUBECONFIG"
+  
+  if [[ ! -v CLAUDECODE ]]; then
+    # iTerm tools
+    send_notification() {
+      echo -n "\e]9;$1\007"
     }
+
+    if [[ "$ZSH_SUBSHELL" -eq 0 && !("$KUBECONFIG" =~ ^\/(tmp|var)\/) && -e "$KUBECONFIG" ]]; then
+      export ORIGINAL_KUBECONFIG="$KUBECONFIG"
+      # Handle macOS mktemp being a bit different
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+        export KUBECONFIG="$(mktemp -t shell_kubeconfig)"
+      else
+        export KUBECONFIG="$(mktemp -t shell_kubeconfig.XXXXXX)"
+      fi
+      cp "$ORIGINAL_KUBECONFIG" "$KUBECONFIG"
+
+      function TRAPEXIT() {
+        [[ "$ZSH_SUBSHELL" -eq 0 ]] && rm "$KUBECONFIG"
+      }
+    fi
+
+    # Fuzzy Finder
+    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+    # To customize prompt, run `p10k configure` or edit ~/tmp/zsh/.p10k.zsh.
+    [[ ! -f "$ZDOTDIR/.p10k.zsh" ]] || source "$ZDOTDIR/.p10k.zsh"
   fi
-
-  # Fuzzy Finder
-  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-  # To customize prompt, run `p10k configure` or edit ~/tmp/zsh/.p10k.zsh.
-  [[ ! -f "$ZDOTDIR/.p10k.zsh" ]] || source "$ZDOTDIR/.p10k.zsh"
 
 fi # End of Interactive block
 

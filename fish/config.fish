@@ -65,11 +65,8 @@ else if command -q vim
     alias vi vim
 end
 
-# asdf
-_source_exists $HOMEBREW_ROOT/opt/asdf/libexec/asdf.fish
-_source_exists $HOME/.asdf/plugins/java/set-java-home.fish
-_source_exists $HOME/.asdf/plugins/golang/set-env.fish
-set -gx ASDF_GOLANG_MOD_VERSION_ENABLED true
+# mise
+set -gx MISE_ACTIVATE_AGGRESSIVE 1
 
 # uv
 set -gx UV_PYTHON_PREFERENCE only-managed
@@ -182,7 +179,8 @@ if status is-interactive
 
     if command -q claude
         function cl --wraps "claude"
-            CLAUDE_CODE_MAX_OUTPUT_TOKENS=32768 EDITOR="code -w" claude $argv
+            # We can add extra env set up here if it doesn't work in Claude's settings.json env field
+            claude $argv
         end
     end
 

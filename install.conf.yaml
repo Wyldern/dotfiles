@@ -7,12 +7,12 @@
 - clean: ['~', '~/.config']
 
 - link:
-    ~/.zshrc: zshrc
-    ~/.p10k.zsh: p10k.zsh
-    ~/.zsh_plugins.txt: zsh_plugins.txt
-    ~/.config/starship.toml: starship.toml
+    # ~/.zshrc: zshrc
+    # ~/.p10k.zsh: p10k.zsh
+    # ~/.zsh_plugins.txt: zsh_plugins.txt
+    # ~/.config/starship.toml: starship.toml
     ~/.tmux.conf: tmuxrc
-    ~/.asdfrc: asdfrc
+    # ~/.asdfrc: asdfrc
     ~/.default-python-packages: default-python-packages
     ~/.default-gems: default-gems
     ~/.gnupg/gpg.conf: gpg.conf
@@ -25,8 +25,9 @@
     ~/.config/nvim:
       path: nvim
       create: true
-    ~/.claude/rules/sandbox.md: claude/rules/sandbox.md
+    # ~/.claude/rules/sandbox.md: claude/rules/sandbox.md
     ~/.claude/rules/style.md: claude/rules/style.md
+    ~/.config/mise/conf.d/dotfiles.toml: mise.dotfiles.toml
 
 - shell:
   - command: fish hooks/tide.fish
